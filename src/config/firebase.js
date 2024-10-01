@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import {createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut} from 'firebase/auth';
-import {getFirestore, setDoc} from 'firebase/firestore';
+import {getFirestore, doc, setDoc} from 'firebase/firestore';
 import { toast } from "react-toastify";
 
 const firebaseConfig = {
@@ -22,12 +22,6 @@ const signup = async (username, email, password) => {
         const res = await createUserWithEmailAndPassword(auth, email,password);
         const user = res.user;
 
-
-        await setDoc(doc(db, "chats", user.uid),{
-            chatData:[],
-        });
-
-
         await setDoc(doc(db, "users", user.uid),{
             id: user.uid,
             username: username.toLowerCase(),
@@ -36,6 +30,10 @@ const signup = async (username, email, password) => {
             avatar: "",
             bio: "Hey there! I'm using chichat",
             lastSeen: Date.now()
+        });
+
+        await setDoc(doc(db, "chats", user.uid),{
+            chatData: []
         });
 
     }catch (error){
